@@ -19,7 +19,8 @@ import {
   Link2,
   Trash2,
   Lock,
-  Volume2
+  Volume2,
+  Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
@@ -55,6 +56,41 @@ export default function DemoPage() {
 
   const [docFile, setDocFile] = React.useState<File | null>(null);
   const [docPreview, setDocPreview] = React.useState<string | null>(null);
+  const loadPreset = (type: string, variant: "phishing" | "clean") => {
+    if (type === "email") {
+      if (variant === "phishing") {
+        setEmailSender("billing-alert@stripe-support-checkout.xyz");
+        setEmailSubject("IMMEDIATE ACTION REQUIRED: Verify your payment details");
+        setEmailBody("Dear customer, we detected unusual login activity on your Stripe Account from a new device. Please verify your payment details within 24 hours to prevent account suspension. Click the link below to resolve this immediately: http://secure-stripe-login-portal-verify.xyz/update");
+        toast.success("Loaded Stripe Phishing sample");
+      } else {
+        setEmailSender("billing@stripe.com");
+        setEmailSubject("Receipt for your monthly subscription #INV-9012");
+        setEmailBody("Hello, thank you for your payment to Stripe. Your receipt #INV-9012 is now available in your account dashboard. No further action is required.");
+        toast.success("Loaded Clean Email sample");
+      }
+    } else if (type === "sms") {
+      if (variant === "phishing") {
+        setSmsSender("AD-KOTAKBK");
+        setSmsBody("URGENT: Your Kotak Bank account has been blocked due to suspicious activity. To reactivate, click here http://pay-bank-reward.in/otp to verify your OTP immediately and avoid a fee of Rs 5,000.");
+        toast.success("Loaded Bank OTP Scam sample");
+      } else {
+        setSmsSender("AMAZON");
+        setSmsBody("Your Amazon package #402-991203 has been delivered to your front door. Thank you for shopping with Amazon!");
+        toast.success("Loaded Clean SMS alert");
+      }
+    } else if (type === "call") {
+      if (variant === "phishing") {
+        setCallCaller("+1 (800) 412-9981 (VoIP)");
+        setCallTranscript("Officer: This is agent Williams from the compliance department. We found an irregular audit trail in your tax files. If you do not execute an immediate wire transfer of Rs 50,000 to our safe escrow routing, we will issue a warrant for your arrest within two hours. Please stay on the line and confirm.");
+        toast.success("Loaded Extortion Call sample");
+      } else {
+        setCallCaller("+1 (800) 275-2273 (Apple Support)");
+        setCallTranscript("Representative: Hi Sarah, following up on your support request regarding iCloud storage synchronization. We have completed the background diagnostic and your device is syncing normally.");
+        toast.success("Loaded Clean Support Call sample");
+      }
+    }
+  };
 
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -324,6 +360,28 @@ export default function DemoPage() {
 
                 {/* Email Tab */}
                 <TabsContent value="email" className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
+                    <span className="text-xs font-bold text-gray-300 font-display flex items-center">
+                      <Sparkles className="h-3.5 w-3.5 text-primary mr-1.5 animate-pulse" /> 1-Click Quick Samples:
+                    </span>
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        type="button"
+                        onClick={() => loadPreset("email", "phishing")}
+                        className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 transition-all cursor-pointer"
+                      >
+                        🚨 Stripe Phishing
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => loadPreset("email", "clean")}
+                        className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-safe/10 text-safe border border-safe/20 hover:bg-safe/20 transition-all cursor-pointer"
+                      >
+                        ✅ Clean Receipt
+                      </button>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Sender Address</label>
@@ -360,6 +418,28 @@ export default function DemoPage() {
 
                 {/* SMS Tab */}
                 <TabsContent value="sms" className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
+                    <span className="text-xs font-bold text-gray-300 font-display flex items-center">
+                      <Sparkles className="h-3.5 w-3.5 text-secondary mr-1.5 animate-pulse" /> 1-Click Quick Samples:
+                    </span>
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        type="button"
+                        onClick={() => loadPreset("sms", "phishing")}
+                        className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 transition-all cursor-pointer"
+                      >
+                        🚨 Bank OTP Scam
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => loadPreset("sms", "clean")}
+                        className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-safe/10 text-safe border border-safe/20 hover:bg-safe/20 transition-all cursor-pointer"
+                      >
+                        ✅ Amazon Delivery Alert
+                      </button>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Sender Mask ID / Phone Number</label>
                     <input 
@@ -384,6 +464,28 @@ export default function DemoPage() {
 
                 {/* Call Transcript */}
                 <TabsContent value="call" className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
+                    <span className="text-xs font-bold text-gray-300 font-display flex items-center">
+                      <Sparkles className="h-3.5 w-3.5 text-accent mr-1.5 animate-pulse" /> 1-Click Quick Samples:
+                    </span>
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        type="button"
+                        onClick={() => loadPreset("call", "phishing")}
+                        className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 transition-all cursor-pointer"
+                      >
+                        🚨 Arrest Warrant Extortion
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => loadPreset("call", "clean")}
+                        className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-safe/10 text-safe border border-safe/20 hover:bg-safe/20 transition-all cursor-pointer"
+                      >
+                        ✅ Apple Support Call
+                      </button>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Caller Caller ID</label>
                     <input 
@@ -517,25 +619,29 @@ export default function DemoPage() {
               exit={{ opacity: 0, y: 15 }}
               className="space-y-6"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
                 <div className="flex items-center space-x-3">
                   <button 
                     onClick={() => setResult(null)}
-                    className="text-xs text-gray-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/5 hover:border-white/10 bg-gray-900/20 transition-all cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-primary hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-[0_2px_15px_rgba(37,99,235,0.3)] cursor-pointer flex items-center space-x-1.5"
                   >
-                    ← Back to input
+                    <RotateCw className="h-3.5 w-3.5" />
+                    <span>Test Another Sample</span>
                   </button>
-                  <span className="text-xs text-gray-500 font-mono">Scan Run ID: {result.id}</span>
+                  <span className="text-xs text-gray-400 font-mono hidden sm:inline">Run ID: {result.id}</span>
                 </div>
                 
-                <div className={`px-3 py-1 rounded-full text-xs font-bold font-display uppercase border ${
-                  result.verdict === "Critical" 
-                    ? "bg-danger/10 text-danger border-danger/20" 
-                    : result.verdict === "Warning" 
-                      ? "bg-warning/10 text-warning border-warning/20" 
-                      : "bg-safe/10 text-safe border-safe/20"
-                }`}>
-                  {result.verdict} Severity Level
+                <div className="flex items-center space-x-3">
+                  <span className="text-xs text-gray-400 font-medium hidden sm:inline">Threat Assessment:</span>
+                  <div className={`px-3.5 py-1.5 rounded-full text-xs font-bold font-display uppercase border shadow-sm ${
+                    result.verdict === "Critical" 
+                      ? "bg-danger/10 text-danger border-danger/30" 
+                      : result.verdict === "Warning" 
+                        ? "bg-warning/10 text-warning border-warning/30" 
+                        : "bg-safe/10 text-safe border-safe/30"
+                  }`}>
+                    {result.verdict} Severity
+                  </div>
                 </div>
               </div>
 
