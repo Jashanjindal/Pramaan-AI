@@ -360,11 +360,11 @@ export default function DemoPage() {
 
                 {/* Email Tab */}
                 <TabsContent value="email" className="space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
-                    <span className="text-xs font-bold text-gray-300 font-display flex items-center">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-white/5 border border-white/5">
+                    <span className="text-xs font-bold text-gray-300 font-display flex items-center shrink-0">
                       <Sparkles className="h-3.5 w-3.5 text-primary mr-1.5 animate-pulse" /> 1-Click Quick Samples:
                     </span>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <button 
                         type="button"
                         onClick={() => loadPreset("email", "phishing")}
@@ -418,11 +418,11 @@ export default function DemoPage() {
 
                 {/* SMS Tab */}
                 <TabsContent value="sms" className="space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
-                    <span className="text-xs font-bold text-gray-300 font-display flex items-center">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-white/5 border border-white/5">
+                    <span className="text-xs font-bold text-gray-300 font-display flex items-center shrink-0">
                       <Sparkles className="h-3.5 w-3.5 text-secondary mr-1.5 animate-pulse" /> 1-Click Quick Samples:
                     </span>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <button 
                         type="button"
                         onClick={() => loadPreset("sms", "phishing")}
@@ -464,11 +464,11 @@ export default function DemoPage() {
 
                 {/* Call Transcript */}
                 <TabsContent value="call" className="space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-white/5 border border-white/5">
-                    <span className="text-xs font-bold text-gray-300 font-display flex items-center">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-white/5 border border-white/5">
+                    <span className="text-xs font-bold text-gray-300 font-display flex items-center shrink-0">
                       <Sparkles className="h-3.5 w-3.5 text-accent mr-1.5 animate-pulse" /> 1-Click Quick Samples:
                     </span>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <button 
                         type="button"
                         onClick={() => loadPreset("call", "phishing")}

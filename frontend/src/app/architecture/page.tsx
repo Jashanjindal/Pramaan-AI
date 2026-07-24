@@ -17,45 +17,38 @@ import {
   Layers, 
   Terminal, 
   Zap, 
-  LineChart 
+  LineChart,
+  ArrowDown
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 
-interface NodeDetail {
-  title: string;
-  sub: string;
-  desc: string;
-  latency: string;
-  accuracy: string;
-  stack: string;
-}
-
-const nodeDetails: Record<string, NodeDetail> = {
+// Node data definitions
+const nodeDetails: Record<string, { title: string; sub: string; desc: string; latency: string; accuracy: string; stack: string }> = {
   ingress: {
-    title: "Ingress Layer",
-    sub: "Unified API Ingestion Gateway",
-    desc: "Ingests unstructured communication vectors: SMTP servers, Twilio webhooks, VoIP session SIP records, and direct multipart document uploads.",
-    latency: "8ms - 15ms",
-    accuracy: "N/A (Gateway)",
-    stack: "FastAPI Routers, Async Ingress queue"
+    title: "Ingress API Gateway",
+    sub: "Multi-Channel Ingestion Router",
+    desc: "Single high-throughput entry point for email headers, raw SMS payloads, speech audio streams, and OCR document scans.",
+    latency: "< 2ms",
+    accuracy: "100% Schema Validation",
+    stack: "FastAPI, Pydantic v2, AsyncIO"
   },
   parser: {
-    title: "Parser & Normalizer",
-    sub: "Text Normalization & Cleansing Engine",
-    desc: "Splits headers, strips HTML, decodes Unicode variations, resolves URL shorteners, and structures metadata keys.",
+    title: "Email & SMS Security Parser",
+    sub: "Header & Regex Extraction Engine",
+    desc: "Screens SPF/DKIM records, extracts embedded shortlinks, resolves unverified domain age registrations, and identifies OTP phishing triggers.",
     latency: "12ms",
-    accuracy: "99.8% Parse Success",
-    stack: "Python regex libraries, custom URL redirect parser"
+    accuracy: "98.9% Header Accuracy",
+    stack: "Python dnspython, re, urllib"
   },
   ocr: {
-    title: "OCR Visual Extraction",
-    sub: "EasyOCR & Tesseract OCR Engines",
-    desc: "Performs layout analysis, identifies bounding boxes, extracts invoice text characters, and captures visual seals/QR matrices.",
-    latency: "350ms - 800ms",
-    accuracy: "98.2% Character Accuracy",
-    stack: "EasyOCR (PyTorch), Tesseract OCR Engine, OpenCV"
+    title: "Visual OCR Engine",
+    sub: "Document & Layout Extraction",
+    desc: "Extracts key invoice elements, checks stamp compression levels, validates QR digital seals, and detects PDF font modification.",
+    latency: "180ms",
+    accuracy: "96.2% Optical Recognition",
+    stack: "EasyOCR, Tesseract, OpenCV"
   },
   whisper: {
     title: "Whisper Transcription Engine",
@@ -125,64 +118,47 @@ export default function ArchitecturePage() {
           {/* Visual Architecture Diagram */}
           <div className="lg:col-span-2 glass-panel p-8 rounded-2xl border border-white/5 relative overflow-hidden flex flex-col items-center">
             
-            {/* SVG Running Data Flow Lines */}
-            <div className="absolute inset-0 pointer-events-none opacity-40">
-              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                <style>{`
-                  .flow-line {
-                    stroke-dasharray: 8 4;
-                    animation: flow 20s linear infinite;
-                  }
-                  @keyframes flow {
-                    to { stroke-dashoffset: -200; }
-                  }
-                `}</style>
-                {/* SVG path traces connecting visual blocks */}
-                <path d="M 120 100 L 250 100" fill="none" stroke="#2563EB" strokeWidth="2" className="flow-line" />
-                <path d="M 120 180 L 250 180" fill="none" stroke="#2563EB" strokeWidth="2" className="flow-line" />
-                <path d="M 120 260 L 250 260" fill="none" stroke="#2563EB" strokeWidth="2" className="flow-line" />
-                
-                <path d="M 370 180 L 480 180" fill="none" stroke="#7C3AED" strokeWidth="2" className="flow-line" />
-                <path d="M 400 100 L 480 180" fill="none" stroke="#7C3AED" strokeWidth="2" className="flow-line" />
-                <path d="M 400 260 L 480 180" fill="none" stroke="#7C3AED" strokeWidth="2" className="flow-line" />
-
-                <path d="M 520 180 L 620 180" fill="none" stroke="#06B6D4" strokeWidth="2" className="flow-line" />
-              </svg>
-            </div>
-
-            <div className="w-full space-y-12 relative z-10">
+            <div className="w-full space-y-6 relative z-10">
               
               {/* Row 1: Ingress Gateway */}
               <div className="flex justify-center">
                 <div 
                   onMouseEnter={() => setSelectedNode("ingress")}
                   onClick={() => setSelectedNode("ingress")}
-                  className={`px-6 py-4 rounded-xl border transition-all cursor-pointer text-center max-w-[200px] ${
+                  className={`px-6 py-4 rounded-xl border transition-all cursor-pointer text-center max-w-[220px] w-full ${
                     selectedNode === "ingress" 
-                      ? "border-primary bg-primary/10 shadow-[0_0_15px_rgba(37,99,235,0.25)]" 
-                      : "border-white/5 bg-gray-900/40 hover:border-white/10"
+                      ? "border-primary bg-primary/10 shadow-[0_0_20px_rgba(37,99,235,0.3)] scale-[1.02]" 
+                      : "border-white/10 bg-gray-900/60 hover:border-white/20"
                   }`}
                 >
                   <Layers className="h-5 w-5 text-primary mx-auto mb-2" />
                   <p className="text-xs font-bold text-white font-display">Ingress API Gateway</p>
-                  <span className="text-[9px] text-gray-500 font-mono block mt-1">Multi-Channel Ingestion</span>
+                  <span className="text-[9px] text-gray-400 font-mono block mt-1">Multi-Channel Ingestion</span>
                 </div>
               </div>
 
+              {/* Vertical Connector Line 1 */}
+              <div className="flex flex-col items-center justify-center -my-2">
+                <div className="h-7 w-0.5 bg-gradient-to-b from-primary via-blue-400 to-secondary relative">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-primary animate-ping" />
+                </div>
+                <ArrowDown className="h-3.5 w-3.5 text-secondary -mt-1" />
+              </div>
+
               {/* Row 2: Ingress Channels */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div 
                   onMouseEnter={() => setSelectedNode("parser")}
                   onClick={() => setSelectedNode("parser")}
                   className={`p-4 rounded-xl border transition-all cursor-pointer text-center ${
                     selectedNode === "parser" 
                       ? "border-primary bg-primary/10 shadow-[0_0_15px_rgba(37,99,235,0.25)]" 
-                      : "border-white/5 bg-gray-900/40 hover:border-white/10"
+                      : "border-white/10 bg-gray-900/60 hover:border-white/20"
                   }`}
                 >
                   <Mail className="h-5 w-5 text-primary mx-auto mb-2" />
                   <p className="text-xs font-bold text-white font-display">Email/SMS Parser</p>
-                  <span className="text-[9px] text-gray-500 font-mono block mt-0.5">Regex & Metadata</span>
+                  <span className="text-[9px] text-gray-400 font-mono block mt-0.5">Regex & Metadata</span>
                 </div>
 
                 <div 
@@ -191,12 +167,12 @@ export default function ArchitecturePage() {
                   className={`p-4 rounded-xl border transition-all cursor-pointer text-center ${
                     selectedNode === "ocr" 
                       ? "border-primary bg-primary/10 shadow-[0_0_15px_rgba(37,99,235,0.25)]" 
-                      : "border-white/5 bg-gray-900/40 hover:border-white/10"
+                      : "border-white/10 bg-gray-900/60 hover:border-white/20"
                   }`}
                 >
                   <FileText className="h-5 w-5 text-secondary mx-auto mb-2" />
                   <p className="text-xs font-bold text-white font-display">OCR Engine</p>
-                  <span className="text-[9px] text-gray-500 font-mono block mt-0.5">EasyOCR / Vision</span>
+                  <span className="text-[9px] text-gray-400 font-mono block mt-0.5">EasyOCR / Vision</span>
                 </div>
 
                 <div 
@@ -205,29 +181,37 @@ export default function ArchitecturePage() {
                   className={`p-4 rounded-xl border transition-all cursor-pointer text-center ${
                     selectedNode === "whisper" 
                       ? "border-primary bg-primary/10 shadow-[0_0_15px_rgba(37,99,235,0.25)]" 
-                      : "border-white/5 bg-gray-900/40 hover:border-white/10"
+                      : "border-white/10 bg-gray-900/60 hover:border-white/20"
                   }`}
                 >
                   <PhoneCall className="h-5 w-5 text-accent mx-auto mb-2" />
                   <p className="text-xs font-bold text-white font-display">STT Whisper</p>
-                  <span className="text-[9px] text-gray-500 font-mono block mt-0.5">Waveform parsing</span>
+                  <span className="text-[9px] text-gray-400 font-mono block mt-0.5">Waveform parsing</span>
                 </div>
               </div>
 
+              {/* Vertical Connector Line 2 */}
+              <div className="flex flex-col items-center justify-center -my-2">
+                <div className="h-7 w-0.5 bg-gradient-to-b from-secondary via-purple-400 to-accent relative">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-secondary animate-ping" />
+                </div>
+                <ArrowDown className="h-3.5 w-3.5 text-accent -mt-1" />
+              </div>
+
               {/* Row 3: Unified ML Engine */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div 
                   onMouseEnter={() => setSelectedNode("embeddings")}
                   onClick={() => setSelectedNode("embeddings")}
                   className={`p-4 rounded-xl border transition-all cursor-pointer text-center ${
                     selectedNode === "embeddings" 
                       ? "border-secondary bg-secondary/10 shadow-[0_0_15px_rgba(124,58,237,0.25)]" 
-                      : "border-white/5 bg-gray-900/40 hover:border-white/10"
+                      : "border-white/10 bg-gray-900/60 hover:border-white/20"
                   }`}
                 >
                   <Binary className="h-5 w-5 text-secondary mx-auto mb-2" />
                   <p className="text-xs font-bold text-white font-display">MiniLM Vectors</p>
-                  <span className="text-[9px] text-gray-500 font-mono block mt-0.5">Embeddings Model</span>
+                  <span className="text-[9px] text-gray-400 font-mono block mt-0.5">Embeddings Model</span>
                 </div>
 
                 <div 
@@ -236,12 +220,12 @@ export default function ArchitecturePage() {
                   className={`p-4 rounded-xl border transition-all cursor-pointer text-center ${
                     selectedNode === "classifiers" 
                       ? "border-secondary bg-secondary/10 shadow-[0_0_15px_rgba(124,58,237,0.25)]" 
-                      : "border-white/5 bg-gray-900/40 hover:border-white/10"
+                      : "border-white/10 bg-gray-900/60 hover:border-white/20"
                   }`}
                 >
                   <Cpu className="h-5 w-5 text-accent mx-auto mb-2" />
                   <p className="text-xs font-bold text-white font-display">ML Classifiers</p>
-                  <span className="text-[9px] text-gray-500 font-mono block mt-0.5">Threat patterns</span>
+                  <span className="text-[9px] text-gray-400 font-mono block mt-0.5">Threat patterns</span>
                 </div>
 
                 <div 
@@ -250,29 +234,37 @@ export default function ArchitecturePage() {
                   className={`p-4 rounded-xl border transition-all cursor-pointer text-center ${
                     selectedNode === "auxiliary" 
                       ? "border-secondary bg-secondary/10 shadow-[0_0_15px_rgba(124,58,237,0.25)]" 
-                      : "border-white/5 bg-gray-900/40 hover:border-white/10"
+                      : "border-white/10 bg-gray-900/60 hover:border-white/20"
                   }`}
                 >
                   <FileSignature className="h-5 w-5 text-primary mx-auto mb-2" />
                   <p className="text-xs font-bold text-white font-display">Auxiliary verify</p>
-                  <span className="text-[9px] text-gray-500 font-mono block mt-0.5">Domain & QR seals</span>
+                  <span className="text-[9px] text-gray-400 font-mono block mt-0.5">Domain & QR seals</span>
                 </div>
               </div>
 
+              {/* Vertical Connector Line 3 */}
+              <div className="flex flex-col items-center justify-center -my-2">
+                <div className="h-7 w-0.5 bg-gradient-to-b from-accent via-cyan-400 to-safe relative">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent animate-ping" />
+                </div>
+                <ArrowDown className="h-3.5 w-3.5 text-safe -mt-1" />
+              </div>
+
               {/* Row 4: Risk Fusion & Final Verdict */}
-              <div className="grid grid-cols-2 gap-8 max-w-md mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-md mx-auto">
                 <div 
                   onMouseEnter={() => setSelectedNode("fusion")}
                   onClick={() => setSelectedNode("fusion")}
                   className={`p-4 rounded-xl border transition-all cursor-pointer text-center ${
                     selectedNode === "fusion" 
                       ? "border-accent bg-accent/10 shadow-[0_0_15px_rgba(6,182,212,0.25)]" 
-                      : "border-white/5 bg-gray-900/40 hover:border-white/10"
+                      : "border-white/10 bg-gray-900/60 hover:border-white/20"
                   }`}
                 >
                   <GitMerge className="h-5 w-5 text-accent mx-auto mb-2" />
                   <p className="text-xs font-bold text-white font-display">Risk Fusion Core</p>
-                  <span className="text-[9px] text-gray-500 font-mono block mt-0.5">Synthesis Matrix</span>
+                  <span className="text-[9px] text-gray-400 font-mono block mt-0.5">Synthesis Matrix</span>
                 </div>
 
                 <div 
@@ -280,13 +272,13 @@ export default function ArchitecturePage() {
                   onClick={() => setSelectedNode("verdict")}
                   className={`p-4 rounded-xl border transition-all cursor-pointer text-center ${
                     selectedNode === "verdict" 
-                      ? "border-accent bg-accent/10 shadow-[0_0_15px_rgba(6,182,212,0.25)]" 
-                      : "border-white/5 bg-gray-900/40 hover:border-white/10"
+                      ? "border-safe bg-safe/10 shadow-[0_0_15px_rgba(16,185,129,0.25)]" 
+                      : "border-white/10 bg-gray-900/60 hover:border-white/20"
                   }`}
                 >
                   <Shield className="h-5 w-5 text-safe mx-auto mb-2 animate-pulse" />
                   <p className="text-xs font-bold text-white font-display">Verdict Logic</p>
-                  <span className="text-[9px] text-gray-500 font-mono block mt-0.5">Threat response</span>
+                  <span className="text-[9px] text-gray-400 font-mono block mt-0.5">Threat response</span>
                 </div>
               </div>
 
