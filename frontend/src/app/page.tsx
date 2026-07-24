@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Shield, Mail, MessageSquare, PhoneCall, FileText, ArrowRight, Activity, Cpu, Sparkles, Check, CheckCircle2, ChevronRight, Zap, RefreshCw, BarChart2, XCircle } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { Shield, Mail, MessageSquare, PhoneCall, FileText, ArrowRight, Activity, Cpu, Sparkles, CheckCircle2, RefreshCw, BarChart2, XCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function LandingPage() {
   const containerRef = React.useRef<HTMLDivElement>(null);

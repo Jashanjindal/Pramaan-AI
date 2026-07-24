@@ -12,13 +12,10 @@ import {
   Loader2, 
   ArrowRight, 
   File, 
-  AlertTriangle,
   RotateCw,
   TrendingUp,
   Award,
-  Link2,
   Trash2,
-  Lock,
   Volume2,
   Sparkles
 } from "lucide-react";

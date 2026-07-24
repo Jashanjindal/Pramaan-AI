@@ -18,7 +18,6 @@ import {
   Info,
   CheckCircle2,
   AlertTriangle,
-  XCircle,
   HelpCircle,
   Keyboard
 } from "lucide-react";

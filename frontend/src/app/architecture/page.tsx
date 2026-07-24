@@ -4,23 +4,17 @@ import * as React from "react";
 import { 
   Shield, 
   Mail, 
-  MessageSquare, 
   PhoneCall, 
   FileText, 
   Cpu, 
-  Database, 
-  Activity, 
   Binary, 
-  Eye, 
   FileSignature, 
   GitMerge, 
   Layers, 
-  Terminal, 
-  Zap, 
-  LineChart,
-  ArrowDown
+  ArrowDown,
+  Activity,
+  Terminal
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 

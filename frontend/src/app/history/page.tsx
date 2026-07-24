@@ -1,10 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Mail, MessageSquare, PhoneCall, FileText, Search, Trash2, ShieldAlert, Calendar, Eye, ShieldCheck, Download } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Mail, MessageSquare, PhoneCall, FileText, Search, Trash2, Eye, ShieldCheck, Download } from "lucide-react";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Card } from "@/components/ui/Card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/Dialog";
 import { useHistoryStore, ScanResult } from "@/store/historyStore";
 import toast from "react-hot-toast";

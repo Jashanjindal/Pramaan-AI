@@ -10,9 +10,6 @@ import {
   TrendingUp, 
   AlertOctagon, 
   CheckCircle, 
-  Users, 
-  Calendar, 
-  Filter, 
   ArrowDownRight, 
   ArrowUpRight 
 } from "lucide-react";
@@ -28,11 +25,9 @@ import {
   Bar, 
   Legend 
 } from "recharts";
-import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useHistoryStore } from "@/store/historyStore";
-import Link from "next/link";
 
 const chartData = [
   { day: "Mon", Emails: 120, SMS: 340, Calls: 50, Documents: 24, Fraud: 18 },
@@ -69,7 +64,6 @@ export default function DashboardPage() {
   const totalScanned = scans.length;
   const criticalScans = scans.filter((s) => s.verdict === "Critical").length;
   const warningScans = scans.filter((s) => s.verdict === "Warning").length;
-  const safeScans = scans.filter((s) => s.verdict === "Safe").length;
 
   const emailCount = scans.filter((s) => s.type === "email").length;
   const smsCount = scans.filter((s) => s.type === "sms").length;
