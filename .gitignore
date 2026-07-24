@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+/frontend/node_modules/
+/backend/venv/
+env/
+venv/
+.venv/
+ENV/
+
+# Production builds
+/frontend/.next/
+/frontend/out/
+/frontend/build/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.eggrc
+*.egg-info/
+.eggs/
+
+# Environment configurations
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.backup
+.env.dev
+.env.prod
