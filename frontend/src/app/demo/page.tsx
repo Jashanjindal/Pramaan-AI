@@ -571,7 +571,7 @@ export default function DemoPage() {
               className="flex justify-center items-center min-h-[450px]"
             >
               <Card className="max-w-md w-full border-primary/20 bg-gray-950/80 shadow-2xl relative overflow-hidden text-center p-8">
-                <div className="absolute inset-0 bg-grid-bg-fine opacity-20" />
+                <div className="absolute inset-0 grid-bg-fine opacity-20" />
                 <div className="absolute top-0 left-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent w-full animate-pulse" />
                 
                 <Loader2 className="h-10 w-10 text-primary animate-spin mx-auto mb-6" />
