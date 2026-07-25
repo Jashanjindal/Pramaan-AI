@@ -60,7 +60,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-bg-dark text-gray-100 flex flex-col md:flex-row relative">
       {/* Background Ambience */}
-      <div className="absolute inset-0 bg-grid-bg opacity-30 pointer-events-none -z-10" />
+      <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none -z-10" />
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse-slow" />
       <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[150px] pointer-events-none -z-10 animate-pulse-slow" />
 
@@ -95,14 +95,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link 
                 key={item.name} 
                 href={item.href}
-                className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all group ${
-                  active 
-                    ? "bg-white/10 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] border border-white/10" 
-                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                className={`relative flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-colors group ${
+                  active ? "text-white" : "text-gray-400 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <Icon className={`h-4.5 w-4.5 mr-3 transition-colors ${active ? "text-primary" : "text-gray-400 group-hover:text-gray-300"}`} />
-                {item.name}
+                {active && (
+                  <motion.span
+                    layoutId="sidebar-active"
+                    className="absolute inset-0 rounded-xl bg-white/10 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]"
+                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                  />
+                )}
+                <Icon className={`relative h-4.5 w-4.5 mr-3 transition-transform group-hover:scale-110 ${active ? "text-primary" : "text-gray-400 group-hover:text-gray-300"}`} />
+                <span className="relative">{item.name}</span>
               </Link>
             );
           })}
@@ -288,7 +293,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {/* Page Inner Content */}
         <main className="flex-1 overflow-y-auto p-6 md:p-8">
-          {children}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
 

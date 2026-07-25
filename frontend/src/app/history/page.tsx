@@ -1,18 +1,33 @@
 "use client";
 
 import * as React from "react";
-import { Mail, MessageSquare, PhoneCall, FileText, Search, Trash2, Eye, ShieldCheck, Download } from "lucide-react";
+import { Mail, MessageSquare, PhoneCall, FileText, Search, Trash2, Eye, ShieldCheck, Download, ArrowUpDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Card } from "@/components/ui/Card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/Dialog";
 import { useHistoryStore, ScanResult } from "@/store/historyStore";
 import toast from "react-hot-toast";
 
+type SortKey = "timestamp" | "score";
+type SortDirection = "asc" | "desc";
+
 export default function HistoryPage() {
   const [mounted, setMounted] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [categoryFilter, setCategoryFilter] = React.useState("all");
   const [viewScan, setViewScan] = React.useState<ScanResult | null>(null);
+  const [sortBy, setSortBy] = React.useState<SortKey>("timestamp");
+  const [sortDir, setSortDir] = React.useState<SortDirection>("desc");
+
+  const toggleSort = (key: SortKey) => {
+    if (key === sortBy) {
+      setSortDir((dir) => (dir === "asc" ? "desc" : "asc"));
+      return;
+    }
+    setSortBy(key);
+    setSortDir("desc");
+  };
 
   const { scans, clearHistory } = useHistoryStore();
 
@@ -30,7 +45,8 @@ export default function HistoryPage() {
     );
   }
 
-  const filteredScans = scans.filter((scan) => {
+  const filteredScans = scans
+    .filter((scan) => {
     const matchesSearch = 
       scan.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       scan.aiExplanation.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -39,8 +55,13 @@ export default function HistoryPage() {
 
     const matchesCategory = categoryFilter === "all" || scan.type === categoryFilter;
 
-    return matchesSearch && matchesCategory;
-  });
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      const factor = sortDir === "asc" ? 1 : -1;
+      if (sortBy === "score") return (a.score - b.score) * factor;
+      return (new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) * factor;
+    });
 
   const handleDownloadReport = (scan: ScanResult) => {
     const reportContent = `
@@ -78,7 +99,11 @@ ${scan.suggestedAction}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h2 className="text-2xl font-bold text-white font-display">Verification History Ledger</h2>
-            <p className="text-xs text-gray-500 font-medium">Audit logs of all communications screened through PramaanAI.</p>
+            <p className="text-xs text-gray-500 font-medium">
+              Audit logs of all communications screened through PramaanAI —{" "}
+              <span className="text-gray-300 font-mono">{filteredScans.length}</span> of{" "}
+              <span className="text-gray-300 font-mono">{scans.length}</span> entries shown.
+            </p>
           </div>
 
           <button
@@ -117,9 +142,16 @@ ${scan.suggestedAction}
               <button 
                 key={tab.id}
                 onClick={() => setCategoryFilter(tab.id)} 
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${categoryFilter === tab.id ? "bg-white/10 text-white" : "text-gray-400 hover:text-white"}`}
+                className={`relative px-3 py-1.5 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${categoryFilter === tab.id ? "text-white" : "text-gray-400 hover:text-white"}`}
               >
-                {tab.label}
+                {categoryFilter === tab.id && (
+                  <motion.span
+                    layoutId="history-filter-pill"
+                    className="absolute inset-0 rounded-lg bg-white/10"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative">{tab.label}</span>
               </button>
             ))}
           </div>
@@ -133,13 +165,30 @@ ${scan.suggestedAction}
                 <tr className="border-b border-white/5 text-gray-400 font-display text-xs font-bold uppercase bg-black/20">
                   <th className="px-6 py-4">Ingress Channel</th>
                   <th className="px-6 py-4">Target / Metadata</th>
-                  <th className="px-6 py-4">Scan Date</th>
-                  <th className="px-6 py-4">Risk Rating</th>
+                  <th className="px-6 py-4">
+                    <button
+                      onClick={() => toggleSort("timestamp")}
+                      className={`flex items-center gap-1.5 uppercase transition-colors cursor-pointer ${sortBy === "timestamp" ? "text-white" : "hover:text-gray-200"}`}
+                    >
+                      Scan Date
+                      <ArrowUpDown className={`h-3 w-3 transition-transform ${sortBy === "timestamp" && sortDir === "asc" ? "rotate-180" : ""}`} />
+                    </button>
+                  </th>
+                  <th className="px-6 py-4">
+                    <button
+                      onClick={() => toggleSort("score")}
+                      className={`flex items-center gap-1.5 uppercase transition-colors cursor-pointer ${sortBy === "score" ? "text-white" : "hover:text-gray-200"}`}
+                    >
+                      Risk Rating
+                      <ArrowUpDown className={`h-3 w-3 transition-transform ${sortBy === "score" && sortDir === "asc" ? "rotate-180" : ""}`} />
+                    </button>
+                  </th>
                   <th className="px-6 py-4">Verdict</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
+                <AnimatePresence initial={false}>
                 {filteredScans.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center py-12 text-gray-500 text-xs font-mono">No entries found matching filters.</td>
@@ -151,7 +200,15 @@ ${scan.suggestedAction}
                     const isCall = scan.type === "call";
 
                     return (
-                      <tr key={scan.id} className="hover:bg-white/[0.01] transition-all">
+                      <motion.tr
+                        key={scan.id}
+                        layout
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.25 }}
+                        className="hover:bg-white/[0.03] transition-colors"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="flex items-center space-x-2 text-xs font-medium text-white">
                             {isEmail && <Mail className="w-4 h-4 text-primary" />}
@@ -207,10 +264,11 @@ ${scan.suggestedAction}
                           </div>
                         </td>
 
-                      </tr>
+                      </motion.tr>
                     );
                   })
                 )}
+                </AnimatePresence>
               </tbody>
             </table>
           </div>
