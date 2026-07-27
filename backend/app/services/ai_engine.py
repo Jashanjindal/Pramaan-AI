@@ -1,4 +1,7 @@
+import os
 import re
+import joblib
+import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
@@ -36,6 +39,54 @@ class UnifiedAIEngine:
         self.vectorizer = TfidfVectorizer(stop_words="english")
         # Fit vectorizer on initial scam corpus
         self.vector_matrix = self.vectorizer.fit_transform(SCAM_CORPUS)
+        
+        # Load trained Ridge ML Model (trained on spam.csv)
+        self.ml_model = None
+        self.ml_metadata = None
+        self.load_ml_model()
+
+    def load_ml_model(self):
+        """
+        Loads the serialized Transformer/TF-IDF + Ridge Classifier pipeline trained on spam.csv.
+        """
+        try:
+            model_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "models", "spam_ridge_model.joblib"))
+            meta_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "models", "model_metadata.json"))
+            
+            if os.path.exists(model_path):
+                self.ml_model = joblib.load(model_path)
+                if os.path.exists(meta_path):
+                    with open(meta_path, 'r', encoding='utf-8') as f:
+                        self.ml_metadata = json.load(f)
+                print(f"[RIDS Engine] Successfully loaded ML Ridge Spam Classifier trained on spam.csv (Accuracy: {self.ml_metadata.get('accuracy', 0)*100 if self.ml_metadata else 'N/A'}%)")
+            else:
+                print("[RIDS Engine] ML Ridge model binary not found. Will run baseline heuristics.")
+        except Exception as e:
+            print(f"[RIDS Engine] Error loading ML model: {e}")
+
+    def predict_ml_spam_probability(self, text: str) -> tuple[float, str, float]:
+        """
+        Runs inference using the trained TF-IDF Transformer + Ridge Classifier pipeline.
+        Returns: (spam_probability_percentage, predicted_label, confidence_score)
+        """
+        if not text or len(text.strip()) < 3:
+            return 0.0, "ham", 100.0
+            
+        if self.ml_model is not None:
+            try:
+                # Get calibrated probabilities
+                probas = self.ml_model.predict_proba([text])[0]
+                spam_prob = float(probas[1]) * 100.0
+                predicted_label = "spam" if probas[1] >= 0.5 else "ham"
+                confidence = float(max(probas)) * 100.0
+                return round(spam_prob, 2), predicted_label, round(confidence, 2)
+            except Exception as e:
+                print(f"[RIDS Engine] ML Inference error: {e}")
+                
+        # Fallback to semantic similarity scaling if ML model is unavailable
+        sim, _ = self.calculate_semantic_threat(text)
+        label = "spam" if sim > 40.0 else "ham"
+        return sim, label, 75.0
 
     def calculate_semantic_threat(self, text: str) -> tuple[float, str]:
         """
@@ -81,14 +132,23 @@ class UnifiedAIEngine:
         channel_type: str, 
         semantic_score: float, 
         urgency_count: int, 
-        metadata_risk_weight: float
+        metadata_risk_weight: float,
+        text_content: str = ""
     ) -> tuple[int, str]:
         """
-        Risk Fusion Engine: combines semantic threat vectors, text urgency weights, and
-        metadata variables (like SPF/DKIM flags or VoIP caller ID check results) into a consolidated index.
+        Risk Fusion Engine: combines trained ML Ridge classifier probabilities (trained on spam.csv),
+        semantic similarity threat vectors, text urgency weights, and metadata parameters.
         """
-        # Base score starts with semantic similarities
-        base = semantic_score
+        # ML Model Spam Probability
+        ml_prob = 0.0
+        if text_content:
+            ml_prob, _, _ = self.predict_ml_spam_probability(text_content)
+
+        # Base score combines ML model probability (60% weight) and semantic similarity (40% weight)
+        if ml_prob > 0:
+            base = (ml_prob * 0.65) + (semantic_score * 0.35)
+        else:
+            base = semantic_score
         
         # Add urgency weights (+10 per key term, max +35)
         urgency_addition = min(urgency_count * 10, 35)
