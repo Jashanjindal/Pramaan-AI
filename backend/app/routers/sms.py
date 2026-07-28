@@ -72,7 +72,8 @@ async def analyze_sms(req: SmsScanRequest):
         channel_type="sms",
         semantic_score=semantic_score,
         urgency_count=len(urgency_words),
-        metadata_risk_weight=metadata_risk
+        metadata_risk_weight=metadata_risk,
+        text_content=req.body
     )
     
     confidence = int(92 + (final_score / 15)) if verdict != "Safe" else 96
