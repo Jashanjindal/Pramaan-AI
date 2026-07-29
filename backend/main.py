@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import connect_to_mongo, close_mongo_connection, get_recent_scans
-from app.routers import email, sms, call, document, ml
+from app.routers import email, sms, call, document, ml, phone
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
