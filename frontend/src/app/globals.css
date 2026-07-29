@@ -160,3 +160,14 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Hide Vercel Toolbar overlay */
+#vercel-toolbar,
+vercel-live-feedback,
+[data-vercel-toolbar],
+div[class*="vercel-toolbar"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
