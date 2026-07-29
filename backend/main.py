@@ -35,6 +35,7 @@ app.include_router(sms.router)
 app.include_router(call.router)
 app.include_router(document.router)
 app.include_router(ml.router)
+app.include_router(phone.router)
 
 @app.get("/")
 async def root():
