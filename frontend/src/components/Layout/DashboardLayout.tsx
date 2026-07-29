@@ -95,13 +95,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link 
                 key={item.name} 
                 href={item.href}
-                className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all group ${
+                className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all relative overflow-hidden group ${
                   active 
-                    ? "bg-white/10 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] border border-white/10" 
-                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                    ? "bg-white/10 text-white shadow-[0_4px_20px_-2px_rgba(37,99,235,0.25)] border border-white/10 font-semibold" 
+                    : "text-gray-400 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <Icon className={`h-4.5 w-4.5 mr-3 transition-colors ${active ? "text-primary" : "text-gray-400 group-hover:text-gray-300"}`} />
+                {active && (
+                  <span className="absolute left-0 top-2 bottom-2 w-1 bg-gradient-to-b from-primary to-secondary rounded-r-full" />
+                )}
+                <Icon className={`h-4.5 w-4.5 mr-3 transition-colors ${active ? "text-primary" : "text-gray-500 group-hover:text-gray-300"}`} />
                 {item.name}
               </Link>
             );
