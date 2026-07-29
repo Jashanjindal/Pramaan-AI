@@ -35,23 +35,17 @@ export default function DemoPage() {
   const addScan = useHistoryStore((state) => state.addScan);
 
   // Forms inputs
-  const [emailSender, setEmailSender] = React.useState("billing-alert@stripe-support-checkout.xyz");
-  const [emailSubject, setEmailSubject] = React.useState("IMMEDIATE ACTION REQUIRED: Verify your payment details");
-  const [emailBody, setEmailBody] = React.useState(
-    "Dear customer, we detected unusual login activity on your Stripe Account from a new device. Please verify your payment details within 24 hours to prevent account suspension. Click the link below to resolve this immediately: http://secure-stripe-login-portal-verify.xyz/update"
-  );
+  const [emailSender, setEmailSender] = React.useState("");
+  const [emailSubject, setEmailSubject] = React.useState("");
+  const [emailBody, setEmailBody] = React.useState("");
 
-  const [smsSender, setSmsSender] = React.useState("AD-KOTAKBK");
-  const [smsBody, setSmsBody] = React.useState(
-    "URGENT: Your Kotak Bank account has been blocked due to suspicious activity. To reactivate, click here http://pay-bank-reward.in/otp to verify your OTP immediately and avoid a fee of Rs 5,000."
-  );
+  const [smsSender, setSmsSender] = React.useState("");
+  const [smsBody, setSmsBody] = React.useState("");
 
-  const [callCaller, setCallCaller] = React.useState("+1 (800) 412-9981 (VoIP)");
-  const [callTranscript, setCallTranscript] = React.useState(
-    "Officer: This is agent Williams from the compliance department. We found an irregular audit trail in your tax files. If you do not execute an immediate wire transfer of Rs 50,000 to our safe escrow routing, we will issue a warrant for your arrest within two hours. Please stay on the line and confirm."
-  );
+  const [callCaller, setCallCaller] = React.useState("");
+  const [callTranscript, setCallTranscript] = React.useState("");
 
-  const [phoneLookup, setPhoneLookup] = React.useState("+1 (800) 412-9981 (VoIP)");
+  const [phoneLookup, setPhoneLookup] = React.useState("");
 
   const [docFile, setDocFile] = React.useState<File | null>(null);
   const [docPreview, setDocPreview] = React.useState<string | null>(null);
