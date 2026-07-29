@@ -73,7 +73,11 @@ async def analyze_call(req: CallScanRequest):
     confidence = int(88 + (final_score / 12)) if verdict != "Safe" else 92
 
     # 6. Explanations
-    if verdict == "Critical":
+    llm_expl = ai_engine.generate_llm_explanation("call", req.transcript, verdict, final_score)
+    if llm_expl:
+        explanation = llm_expl
+        action = "Hang up immediately. Terminate communications and report to legal compliance/fraud hotlines."
+    elif verdict == "Critical":
         explanation = f"VoIP Social Engineering scam detected matching '{match_category}' vectors. The speaker uses high pressure legal compliance threats to force the target into wire transfer escrow conversion."
         action = "Hang up the phone call immediately. Do NOT authorize bank transfers or share identity logs. Report number to local fraud hotlines."
     elif verdict == "Warning":

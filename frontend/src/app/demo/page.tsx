@@ -221,7 +221,7 @@ export default function DemoPage() {
           suggestedAction: data.suggestedAction
         };
       }
-    } catch (error) {
+    } catch {
       console.warn("FastAPI backend offline. Falling back to local heuristics simulation.");
       if (activeTab === "email") {
         generatedResult = {

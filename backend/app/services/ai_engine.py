@@ -169,4 +169,67 @@ class UnifiedAIEngine:
             
         return threat_score, verdict
 
+    def generate_llm_explanation(self, channel: str, text_content: str, verdict: str, threat_score: int) -> str | None:
+        """
+        Queries Gemini API or OpenAI API (if key is set in .env) for deep dynamic AI explanation.
+        Returns explanation string if successful, or None to trigger local fallback.
+        """
+        from app.config import settings
+        import urllib.request
+        
+        # 1. Check Gemini API key
+        if settings.GEMINI_API_KEY:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={settings.GEMINI_API_KEY}"
+                prompt = (
+                    f"You are PramaanAI Cybersecurity Forensic AI. "
+                    f"Analyze this suspicious {channel.upper()} input (Verdict: {verdict}, Threat Score: {threat_score}%):\n"
+                    f"\"{text_content[:1000]}\"\n"
+                    f"Provide a concise 2-sentence threat analysis explanation highlighting specific risk signals, intent, and recommended action."
+                )
+                payload = json.dumps({
+                    "contents": [{"parts": [{"text": prompt}]}]
+                }).encode("utf-8")
+                
+                req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    res_data = json.loads(response.read().decode("utf-8"))
+                    text_res = res_data["candidates"][0]["content"]["parts"][0]["text"]
+                    return text_res.strip()
+            except Exception as e:
+                print(f"[RIDS Engine] Gemini API call skipped/failed: {e}")
+
+        # 2. Check OpenAI API key
+        if settings.OPENAI_API_KEY:
+            try:
+                url = "https://api.openai.com/v1/chat/completions"
+                prompt = (
+                    f"You are PramaanAI Cybersecurity Forensic AI. "
+                    f"Analyze this suspicious {channel.upper()} input (Verdict: {verdict}, Threat Score: {threat_score}%):\n"
+                    f"\"{text_content[:1000]}\"\n"
+                    f"Provide a concise 2-sentence threat analysis explanation highlighting specific risk signals and recommended action."
+                )
+                payload = json.dumps({
+                    "model": "gpt-4o-mini",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 150
+                }).encode("utf-8")
+                
+                req = urllib.request.Request(
+                    url, 
+                    data=payload, 
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {settings.OPENAI_API_KEY}"
+                    }
+                )
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    res_data = json.loads(response.read().decode("utf-8"))
+                    text_res = res_data["choices"][0]["message"]["content"]
+                    return text_res.strip()
+            except Exception as e:
+                print(f"[RIDS Engine] OpenAI API call skipped/failed: {e}")
+
+        return None
+
 ai_engine = UnifiedAIEngine()
