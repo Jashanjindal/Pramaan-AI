@@ -14,11 +14,12 @@ export default function HistoryPage() {
   const [categoryFilter, setCategoryFilter] = React.useState("all");
   const [viewScan, setViewScan] = React.useState<ScanResult | null>(null);
 
-  const { scans, clearHistory } = useHistoryStore();
+  const { scans, clearHistory, fetchRealScans } = useHistoryStore();
 
   React.useEffect(() => {
     setMounted(true);
-  }, []);
+    fetchRealScans();
+  }, [fetchRealScans]);
 
   if (!mounted) {
     return (

@@ -45,10 +45,12 @@ export default function DashboardPage() {
   const [channelFilter, setChannelFilter] = React.useState("all");
 
   const scans = useHistoryStore((state) => state.scans);
+  const fetchRealScans = useHistoryStore((state) => state.fetchRealScans);
 
   React.useEffect(() => {
     setMounted(true);
-  }, []);
+    fetchRealScans();
+  }, [fetchRealScans]);
 
   if (!mounted) {
     return (
