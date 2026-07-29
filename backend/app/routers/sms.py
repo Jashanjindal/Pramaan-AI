@@ -79,7 +79,11 @@ async def analyze_sms(req: SmsScanRequest):
     confidence = int(92 + (final_score / 15)) if verdict != "Safe" else 96
 
     # 6. Explanation compilations
-    if verdict == "Critical":
+    llm_expl = ai_engine.generate_llm_explanation("sms", req.body, verdict, final_score)
+    if llm_expl:
+        explanation = llm_expl
+        action = "Block sender ID immediately. Do NOT click any embedded links or share authentication codes."
+    elif verdict == "Critical":
         explanation = f"High-risk SMS fraud detected matching '{match_category}' signatures. The sender uses bank impersonation techniques with urgency cues and directs targets to unverified OTP/UPI short links."
         action = "Block sender ID immediately. Do NOT authorize any OTP or click the link. Report this instance to cybersecurity regulators."
     elif verdict == "Warning":

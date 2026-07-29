@@ -18,7 +18,13 @@ async def connect_to_mongo():
     """
     try:
         print(f"[MongoDB Atlas] Connecting to cluster...")
-        db_manager.client = AsyncIOMotorClient(settings.MONGODB_URL, serverSelectionTimeoutMS=5000)
+        import certifi
+        db_manager.client = AsyncIOMotorClient(
+            settings.MONGODB_URL, 
+            tlsCAFile=certifi.where(),
+            tlsAllowInvalidCertificates=True,
+            serverSelectionTimeoutMS=5000
+        )
         db_manager.db = db_manager.client[settings.DATABASE_NAME]
         
         # Test ping to cluster

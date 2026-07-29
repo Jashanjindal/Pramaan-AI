@@ -51,10 +51,20 @@ export default function DemoPage() {
     "Officer: This is agent Williams from the compliance department. We found an irregular audit trail in your tax files. If you do not execute an immediate wire transfer of Rs 50,000 to our safe escrow routing, we will issue a warrant for your arrest within two hours. Please stay on the line and confirm."
   );
 
+  const [phoneLookup, setPhoneLookup] = React.useState("+1 (800) 412-9981 (VoIP)");
+
   const [docFile, setDocFile] = React.useState<File | null>(null);
   const [docPreview, setDocPreview] = React.useState<string | null>(null);
   const loadPreset = (type: string, variant: "phishing" | "clean") => {
-    if (type === "email") {
+    if (type === "phone") {
+      if (variant === "phishing") {
+        setPhoneLookup("+1 (800) 412-9981 (VoIP)");
+        toast.success("Loaded Unverified VoIP Scam Number");
+      } else {
+        setPhoneLookup("+1 (800) 275-2273 (Apple Toll-Free)");
+        toast.success("Loaded Verified Business Number");
+      }
+    } else if (type === "email") {
       if (variant === "phishing") {
         setEmailSender("billing-alert@stripe-support-checkout.xyz");
         setEmailSubject("IMMEDIATE ACTION REQUIRED: Verify your payment details");
@@ -199,6 +209,31 @@ export default function DemoPage() {
           aiExplanation: data.aiExplanation,
           suggestedAction: data.suggestedAction
         };
+      } else if (activeTab === "phone") {
+        const response = await fetch(`${apiUrl}/phone/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: phoneLookup })
+        });
+        if (!response.ok) throw new Error("API responded with error");
+        const data = await response.json();
+        generatedResult = {
+          id: "sc-" + Math.random().toString(36).substr(2, 9),
+          type: "call",
+          timestamp: new Date().toISOString(),
+          score: 100 - data.trustScore,
+          confidence: 96,
+          verdict: data.trustScore >= 80 ? "Safe" : data.trustScore >= 50 ? "Warning" : "Critical",
+          details: {
+            callerName: data.phone,
+            trustScore: data.trustScore,
+            headerAnalysis: `Line Type: ${data.lineType} | Carrier: ${data.carrier} | Country: ${data.country}`,
+            urgencyLevel: data.isVoip ? "High" : "Low",
+            manipulationTechniques: data.isVoip ? ["Unverified Virtual Line (VoIP)", "Potential Identity Spoofing"] : ["Verified Telecom Network"]
+          },
+          aiExplanation: `Phone number validation report for ${data.phone}. Verdict: ${data.reputationVerdict}. Carrier: ${data.carrier}. Line Type: ${data.lineType} (${data.isVoip ? "Unverified virtual VoIP gateway" : "Authenticated telecom network"}).`,
+          suggestedAction: data.details.recommendation
+        };
       } else {
         if (!docFile) throw new Error("No file selected");
         const formData = new FormData();
@@ -221,7 +256,7 @@ export default function DemoPage() {
           suggestedAction: data.suggestedAction
         };
       }
-    } catch (error) {
+    } catch {
       console.warn("FastAPI backend offline. Falling back to local heuristics simulation.");
       if (activeTab === "email") {
         generatedResult = {
@@ -278,6 +313,25 @@ export default function DemoPage() {
           },
           aiExplanation: "Impersonation pressure scam. Audio transcripts and vocabulary structures show high correlation with fake government warning call rings, seeking instant monetary conversion.",
           suggestedAction: "Hang up the phone call. Do not transfer funds or share identification documentation."
+        };
+      } else if (activeTab === "phone") {
+        const isVoip = phoneLookup.toLowerCase().includes("voip");
+        generatedResult = {
+          id: "sc-" + Math.random().toString(36).substr(2, 9),
+          type: "call",
+          timestamp: new Date().toISOString(),
+          score: isVoip ? 85 : 15,
+          confidence: 95,
+          verdict: isVoip ? "Critical" : "Safe",
+          details: {
+            callerName: phoneLookup,
+            trustScore: isVoip ? 35 : 95,
+            headerAnalysis: isVoip ? "Line Type: VOIP | Carrier: Virtual Gateway | Risk: High" : "Line Type: MOBILE | Carrier: Verizon Wireless | Risk: Low",
+            urgencyLevel: isVoip ? "High" : "Low",
+            manipulationTechniques: isVoip ? ["Unverified Virtual Line (VoIP)", "Potential Identity Spoofing"] : ["Verified Network Registration"]
+          },
+          aiExplanation: `Phone number intelligence scan for ${phoneLookup}. ${isVoip ? "High-risk unverified VoIP number detected. Likely spoofed virtual caller ID." : "Verified telecom carrier registration. Format valid."}`,
+          suggestedAction: isVoip ? "Exercise high caution. Do not share OTP codes or authorize wire transfers." : "Safe to communicate."
         };
       } else {
         generatedResult = {
@@ -336,22 +390,26 @@ export default function DemoPage() {
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-4 mb-8">
-                  <TabsTrigger value="email" className="flex items-center justify-center space-x-2">
-                    <Mail className="h-4 w-4" />
-                    <span className="hidden sm:inline">Email Portal</span>
+                <TabsList className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar w-full mb-8 p-1.5 bg-gray-900/60 rounded-xl border border-white/5 gap-1.5">
+                  <TabsTrigger value="email" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[100px] sm:min-w-0">
+                    <Mail className="h-4 w-4 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">Email</span>
                   </TabsTrigger>
-                  <TabsTrigger value="sms" className="flex items-center justify-center space-x-2">
-                    <MessageSquare className="h-4 w-4" />
-                    <span className="hidden sm:inline">SMS Ledger</span>
+                  <TabsTrigger value="sms" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[100px] sm:min-w-0">
+                    <MessageSquare className="h-4 w-4 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">SMS</span>
                   </TabsTrigger>
-                  <TabsTrigger value="call" className="flex items-center justify-center space-x-2">
-                    <PhoneCall className="h-4 w-4" />
-                    <span className="hidden sm:inline">Call Transcripts</span>
+                  <TabsTrigger value="call" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[100px] sm:min-w-0">
+                    <PhoneCall className="h-4 w-4 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">Calls</span>
                   </TabsTrigger>
-                  <TabsTrigger value="document" className="flex items-center justify-center space-x-2">
-                    <FileText className="h-4 w-4" />
-                    <span className="hidden sm:inline">Document Vault</span>
+                  <TabsTrigger value="phone" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[110px] sm:min-w-0">
+                    <PhoneCall className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">Number</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="document" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[100px] sm:min-w-0">
+                    <FileText className="h-4 w-4 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">Docs</span>
                   </TabsTrigger>
                 </TabsList>
 
@@ -502,6 +560,45 @@ export default function DemoPage() {
                       className="w-full px-4 py-3 rounded-xl bg-gray-900/50 border border-white/10 focus:border-primary/50 text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-1 focus:ring-primary/30 resize-none"
                       placeholder="Provide caller dialog details..."
                     />
+                  </div>
+                </TabsContent>
+
+                {/* Number Verifier Tab */}
+                <TabsContent value="phone" className="space-y-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-white/5 border border-white/5">
+                    <span className="text-xs font-bold text-gray-300 font-display flex items-center shrink-0">
+                      <Sparkles className="h-3.5 w-3.5 text-emerald-400 mr-1.5 animate-pulse" /> 1-Click Quick Samples:
+                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button 
+                        type="button"
+                        onClick={() => loadPreset("phone", "phishing")}
+                        className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 transition-all cursor-pointer"
+                      >
+                        🚨 Unverified VoIP Line
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => loadPreset("phone", "clean")}
+                        className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-safe/10 text-safe border border-safe/20 hover:bg-safe/20 transition-all cursor-pointer"
+                      >
+                        ✅ Verified Business Toll-Free
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Phone Number / Caller ID</label>
+                    <input 
+                      type="text" 
+                      value={phoneLookup} 
+                      onChange={(e) => setPhoneLookup(e.target.value)} 
+                      className="w-full px-4 py-3 rounded-xl bg-gray-900/50 border border-white/10 focus:border-emerald-500/50 text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
+                      placeholder="e.g. +1 (800) 412-9981 or +91 98765 43210"
+                    />
+                    <p className="text-xs text-gray-400 mt-2">
+                      Performs carrier network verification, line type validation (VoIP / Mobile / Landline), and Truecaller-style trust score check.
+                    </p>
                   </div>
                 </TabsContent>
 

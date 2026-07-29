@@ -220,7 +220,7 @@ export default function LandingPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {steps.map((s, index) => {
+          {steps.map((s) => {
             const Icon = s.icon;
             return (
               <div 

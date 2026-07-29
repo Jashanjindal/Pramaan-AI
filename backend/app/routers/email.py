@@ -85,7 +85,11 @@ async def analyze_email(req: EmailScanRequest):
     confidence = int(90 + (final_score / 10)) if verdict != "Safe" else 95
 
     # 6. Explanations & Suggestions
-    if verdict == "Critical":
+    llm_expl = ai_engine.generate_llm_explanation("email", combined_text, verdict, final_score)
+    if llm_expl:
+        explanation = llm_expl
+        action = "Flag sender address, warn internal networks, and trigger automated quarantine procedures."
+    elif verdict == "Critical":
         explanation = f"Phishing attempt detected with high semantic match to '{match_category}'. The email has unaligned domain credentials (SPF/DKIM Fail) and contains phishing hyperlinks matching unverified domains."
         action = "Flag sender address, warn internal networks, and trigger automated quarantine procedures."
     elif verdict == "Warning":

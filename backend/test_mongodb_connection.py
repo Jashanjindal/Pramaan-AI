@@ -7,7 +7,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".env"))
 load_dotenv(dotenv_path=env_path)
 
-MONGODB_URL = os.getenv("MONGODB_URL", "mongodb+srv://anshiag7206_db_user:KVR52VnMvveiqf0s@pramaan.mmeciht.mongodb.net/pramaan_db?retryWrites=true&w=majority&appName=Pramaan")
+MONGODB_URL = os.getenv("MONGODB_URL", "mongodb+srv://anshiag7206_db_user:KVR52VnMvveiqf0s@pramaan.mmeciht.mongodb.net/pramaan_db?retryWrites=true&w=majority&appName=Pramaan&tlsAllowInvalidCertificates=true")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "pramaan_db")
 
 async def test_mongodb():
@@ -16,7 +16,8 @@ async def test_mongodb():
     print(f"Connecting to URI: {MONGODB_URL[:45]}...")
     
     try:
-        client = AsyncIOMotorClient(MONGODB_URL, serverSelectionTimeoutMS=10000)
+        import certifi
+        client = AsyncIOMotorClient(MONGODB_URL, tlsCAFile=certifi.where(), tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=10000)
         db = client[DATABASE_NAME]
         
         # Ping cluster admin command
