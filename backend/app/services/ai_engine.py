@@ -112,6 +112,62 @@ class UnifiedAIEngine:
             # Fallback if scikit-learn fails
             return 0.0, "General Heuristics"
 
+    def validate_phone_number(self, phone: str) -> dict:
+        """
+        Queries Abstract API Phone Number Validation service.
+        Returns detailed phone intelligence: valid, line_type, carrier, country, is_voip, risk_weight.
+        """
+        from app.config import settings
+        import urllib.request
+        import urllib.parse
+        
+        result = {
+            "phone": phone,
+            "valid": True,
+            "lineType": "VOIP" if "voip" in phone.lower() else "MOBILE/LANDLINE",
+            "carrier": "Detected Carrier Network",
+            "country": "Verified Country Code",
+            "isVoip": "voip" in phone.lower(),
+            "riskWeight": 25.0 if "voip" in phone.lower() else 0.0
+        }
+        
+        if not phone or len(phone.strip()) < 5:
+            result["valid"] = False
+            result["riskWeight"] = 30.0
+            return result
+
+        api_key = settings.PHONE_VALIDATOR_API_KEY
+        if api_key:
+            try:
+                encoded_phone = urllib.parse.quote(phone.strip())
+                url = f"https://phonevalidation.abstractapi.com/v1/?api_key={api_key}&phone={encoded_phone}"
+                req = urllib.request.Request(url, headers={"User-Agent": "PramaanAI-PhoneValidator/1.0"})
+                with urllib.request.urlopen(req, timeout=3) as response:
+                    data = json.loads(response.read().decode("utf-8"))
+                    
+                    if "valid" in data:
+                        result["valid"] = bool(data.get("valid"))
+                        
+                    type_str = str(data.get("type", "")).upper()
+                    if type_str:
+                        result["lineType"] = type_str
+                        if "VOIP" in type_str:
+                            result["isVoip"] = True
+                            result["riskWeight"] += 30.0
+                            
+                    carrier_name = data.get("carrier")
+                    if carrier_name:
+                        result["carrier"] = str(carrier_name)
+                        
+                    country_info = data.get("country", {})
+                    if isinstance(country_info, dict) and country_info.get("name"):
+                        result["country"] = str(country_info.get("name"))
+            except Exception as e:
+                # Graceful fallback to heuristic checks if API limits hit or offline
+                print(f"[RIDS Engine] Phone Validation API check: {e}")
+
+        return result
+
     def scan_for_urgency_keywords(self, text: str) -> list[str]:
         """
         Parses text for pressure signals, urgency warnings, or payment markers.

@@ -19,9 +19,10 @@ class Settings:
     )
     DATABASE_NAME: str = os.getenv("DATABASE_NAME", "pramaan_db")
     
-    # AI API Keys (Optional)
+    # AI & Phone API Keys
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    PHONE_VALIDATOR_API_KEY: str = os.getenv("PHONE_VALIDATOR_API_KEY", "apv_ac67d71f-a18b-455a-87b6-ac2a0159f620")
 
     CORS_ORIGINS: list = [
         "http://localhost:3000",

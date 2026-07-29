@@ -21,15 +21,19 @@ async def analyze_call(req: CallScanRequest):
     if not req.caller or not req.transcript:
         raise HTTPException(status_code=400, detail="Caller details and transcript dialog are required.")
 
+    # Query Phone Validation API Intelligence
+    phone_intel = ai_engine.validate_phone_number(req.caller)
+    
     # Heuristics for Call Metadata / VoIP trust
     caller_lower = req.caller.lower()
-    metadata_risk = 0.0
+    metadata_risk = phone_intel.get("riskWeight", 0.0)
     trust_score = 85
     
-    if "voip" in caller_lower or "unknown" in caller_lower or "spoofed" in caller_lower:
-        metadata_risk += 25.0
+    if "voip" in caller_lower or "unknown" in caller_lower or "spoofed" in caller_lower or phone_intel.get("isVoip"):
+        if metadata_risk == 0:
+            metadata_risk += 25.0
         trust_score -= 40
-    elif len(req.caller) < 8:
+    elif len(req.caller) < 8 or not phone_intel.get("valid"):
         metadata_risk += 15.0
         trust_score -= 20
 
@@ -95,7 +99,8 @@ async def analyze_call(req: CallScanRequest):
             "callerName": req.caller,
             "trustScore": trust_score,
             "manipulationTechniques": manipulations,
-            "suspiciousPhrases": urgency_words
+            "suspiciousPhrases": urgency_words,
+            "phoneIntelligence": phone_intel
         },
         aiExplanation=explanation,
         suggestedAction=action
