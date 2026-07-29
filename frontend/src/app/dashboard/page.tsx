@@ -29,16 +29,6 @@ import { DashboardLayout } from "@/components/Layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useHistoryStore } from "@/store/historyStore";
 
-const chartData = [
-  { day: "Mon", Emails: 120, SMS: 340, Calls: 50, Documents: 24, Fraud: 18 },
-  { day: "Tue", Emails: 180, SMS: 290, Calls: 65, Documents: 32, Fraud: 24 },
-  { day: "Wed", Emails: 150, SMS: 410, Calls: 80, Documents: 28, Fraud: 15 },
-  { day: "Thu", Emails: 210, SMS: 480, Calls: 72, Documents: 41, Fraud: 32 },
-  { day: "Fri", Emails: 260, SMS: 520, Calls: 95, Documents: 35, Fraud: 45 },
-  { day: "Sat", Emails: 110, SMS: 210, Calls: 40, Documents: 15, Fraud: 8 },
-  { day: "Sun", Emails: 90, SMS: 180, Calls: 30, Documents: 12, Fraud: 12 }
-];
-
 export default function DashboardPage() {
   const [mounted, setMounted] = React.useState(false);
   const [timeframe, setTimeframe] = React.useState("7d");
@@ -61,6 +51,24 @@ export default function DashboardPage() {
       </DashboardLayout>
     );
   }
+
+  // Dynamic chart data from real scans
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const chartData = days.map((day) => {
+    const dayScans = scans.filter((s) => {
+      const d = new Date(s.timestamp);
+      const dayName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getDay()];
+      return dayName === day;
+    });
+    return {
+      day,
+      Emails: dayScans.filter((s) => s.type === "email").length,
+      SMS: dayScans.filter((s) => s.type === "sms").length,
+      Calls: dayScans.filter((s) => s.type === "call" || s.type === "phone").length,
+      Documents: dayScans.filter((s) => s.type === "document").length,
+      Fraud: dayScans.filter((s) => s.verdict === "Critical" || s.verdict === "Warning").length
+    };
+  });
 
   // Calculate stats from Zustand scans
   const totalScanned = scans.length;

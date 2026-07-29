@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 export interface ScanResult {
   id: string;
-  type: "email" | "sms" | "call" | "document";
+  type: "email" | "sms" | "call" | "document" | "phone";
   timestamp: string;
   score: number;
   confidence: number;
@@ -76,18 +76,20 @@ export const useHistoryStore = create<HistoryStore>()(
           const res = await fetch(`${apiUrl}/history?limit=50`);
           if (!res.ok) return;
           const data = await res.json();
-          if (data && Array.isArray(data.history) && data.history.length > 0) {
-            const realScans: ScanResult[] = data.history.map((item: DBHistoryItem, index: number) => ({
-              id: item._id || `db-${index}`,
-              type: (item.channel as ScanResult["type"]) || "sms",
-              timestamp: item.timestamp || new Date().toISOString(),
-              score: item.result?.score || 50,
-              confidence: item.result?.confidence || 90,
-              verdict: (item.result?.verdict as ScanResult["verdict"]) || "Warning",
-              details: item.result?.details || {},
-              aiExplanation: item.result?.aiExplanation || "Real-time threat scan verified.",
-              suggestedAction: item.result?.suggestedAction || "Clearance completed."
-            }));
+          if (data && Array.isArray(data.history)) {
+            const realScans: ScanResult[] = data.history
+              .filter((item: DBHistoryItem) => item._id && !item._id.startsWith("sc-00"))
+              .map((item: DBHistoryItem, index: number) => ({
+                id: item._id || `db-${index}`,
+                type: (item.channel as ScanResult["type"]) || "sms",
+                timestamp: item.timestamp || new Date().toISOString(),
+                score: item.result?.score || 50,
+                confidence: item.result?.confidence || 90,
+                verdict: (item.result?.verdict as ScanResult["verdict"]) || "Warning",
+                details: item.result?.details || {},
+                aiExplanation: item.result?.aiExplanation || "Real-time threat scan verified.",
+                suggestedAction: item.result?.suggestedAction || "Clearance completed."
+              }));
             set({ scans: realScans });
           }
         } catch (e) {
@@ -96,7 +98,7 @@ export const useHistoryStore = create<HistoryStore>()(
       },
       addScan: (scan) =>
         set((state) => ({
-          scans: [scan, ...state.scans],
+          scans: [scan, ...state.scans.filter((s) => !s.id.startsWith("sc-00"))],
           notifications: [
             {
               id: Math.random().toString(),
@@ -130,7 +132,7 @@ export const useHistoryStore = create<HistoryStore>()(
         }))
     }),
     {
-      name: "pramaan-ai-history-store"
+      name: "pramaan-ai-history-v2"
     }
   )
 );
