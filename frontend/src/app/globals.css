@@ -151,3 +151,12 @@ body {
   animation: shimmer 1.8s infinite;
   content: '';
 }
+
+/* Hide scrollbar for clean touch scrolling on mobile */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -390,26 +390,26 @@ export default function DemoPage() {
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-5 mb-8">
-                  <TabsTrigger value="email" className="flex items-center justify-center space-x-2">
-                    <Mail className="h-4 w-4" />
-                    <span className="hidden sm:inline">Email Portal</span>
+                <TabsList className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar w-full mb-8 p-1.5 bg-gray-900/60 rounded-xl border border-white/5 gap-1.5">
+                  <TabsTrigger value="email" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[100px] sm:min-w-0">
+                    <Mail className="h-4 w-4 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">Email</span>
                   </TabsTrigger>
-                  <TabsTrigger value="sms" className="flex items-center justify-center space-x-2">
-                    <MessageSquare className="h-4 w-4" />
-                    <span className="hidden sm:inline">SMS Ledger</span>
+                  <TabsTrigger value="sms" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[100px] sm:min-w-0">
+                    <MessageSquare className="h-4 w-4 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">SMS</span>
                   </TabsTrigger>
-                  <TabsTrigger value="call" className="flex items-center justify-center space-x-2">
-                    <PhoneCall className="h-4 w-4" />
-                    <span className="hidden sm:inline">Call Transcripts</span>
+                  <TabsTrigger value="call" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[100px] sm:min-w-0">
+                    <PhoneCall className="h-4 w-4 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">Calls</span>
                   </TabsTrigger>
-                  <TabsTrigger value="phone" className="flex items-center justify-center space-x-2">
-                    <PhoneCall className="h-4 w-4 text-emerald-400" />
-                    <span className="hidden sm:inline">Number Verifier</span>
+                  <TabsTrigger value="phone" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[110px] sm:min-w-0">
+                    <PhoneCall className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">Number</span>
                   </TabsTrigger>
-                  <TabsTrigger value="document" className="flex items-center justify-center space-x-2">
-                    <FileText className="h-4 w-4" />
-                    <span className="hidden sm:inline">Document Vault</span>
+                  <TabsTrigger value="document" className="flex items-center justify-center space-x-1.5 px-3.5 py-2 text-xs font-semibold shrink-0 sm:shrink min-w-[100px] sm:min-w-0">
+                    <FileText className="h-4 w-4 shrink-0" />
+                    <span className="inline text-xs sm:text-sm">Docs</span>
                   </TabsTrigger>
                 </TabsList>
 
