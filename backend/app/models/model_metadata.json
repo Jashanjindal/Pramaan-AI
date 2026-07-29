@@ -5,20 +5,20 @@
   "ham_samples": 4825,
   "spam_samples": 747,
   "test_split_ratio": 0.2,
-  "accuracy": 0.9794,
-  "precision": 0.9315,
-  "recall": 0.9128,
-  "f1_score": 0.922,
-  "roc_auc": 0.9902,
+  "accuracy": 0.9803,
+  "precision": 0.932,
+  "recall": 0.9195,
+  "f1_score": 0.9257,
+  "roc_auc": 0.9905,
   "confusion_matrix": [
     [
       956,
       10
     ],
     [
-      13,
-      136
+      12,
+      137
     ]
   ],
-  "trained_at": "2026-07-27T18:35:21.720252"
+  "trained_at": "2026-07-29T14:11:31.596483"
 }
