@@ -143,7 +143,18 @@ ${scan.suggestedAction}
               <tbody className="divide-y divide-white/5">
                 {filteredScans.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-gray-500 text-xs font-mono">No entries found matching filters.</td>
+                    <td colSpan={6} className="text-center py-16">
+                      <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                        <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3">
+                          <ShieldCheck className="h-6 w-6 text-gray-500" />
+                        </div>
+                        <h4 className="text-sm font-bold text-white font-display">No Verification Logs Found</h4>
+                        <p className="text-xs text-gray-500 mt-1">There are no threat analysis records in MongoDB yet. Run your first analysis in Live Demo to populate the ledger.</p>
+                        <a href="/demo" className="mt-4 px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold rounded-xl border border-white/10 transition-all">
+                          Go to Live Demo →
+                        </a>
+                      </div>
+                    </td>
                   </tr>
                 ) : (
                   filteredScans.map((scan) => {

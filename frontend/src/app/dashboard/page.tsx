@@ -90,30 +90,37 @@ export default function DashboardPage() {
     <DashboardLayout>
       <div className="space-y-8 max-w-6xl mx-auto">
         
-        {/* Header Options */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        {/* Header Options & Telemetry Badge */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-900/40 p-5 rounded-2xl border border-white/5 backdrop-blur-md">
           <div>
+            <div className="flex items-center space-x-2.5 mb-1">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+              <span className="text-[11px] font-mono font-semibold uppercase tracking-widest text-emerald-400">Live Telemetry Node Active</span>
+            </div>
             <h2 className="text-2xl font-bold text-white font-display">Security Overview</h2>
-            <p className="text-xs text-gray-500 font-medium">Real-time indicators across communication vectors.</p>
+            <p className="text-xs text-gray-400 font-medium">Real-time indicators across communication vectors.</p>
           </div>
 
           <div className="flex items-center space-x-3.5">
-            <div className="flex items-center space-x-1.5 bg-gray-900/60 border border-white/5 p-1 rounded-xl">
+            <div className="flex items-center space-x-1.5 bg-gray-950/80 border border-white/10 p-1 rounded-xl shadow-inner">
               <button 
                 onClick={() => setTimeframe("24h")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-all cursor-pointer ${timeframe === "24h" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-all cursor-pointer ${timeframe === "24h" ? "bg-white/10 text-white shadow-sm" : "text-gray-400 hover:text-gray-200"}`}
               >
                 24 Hours
               </button>
               <button 
                 onClick={() => setTimeframe("7d")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-all cursor-pointer ${timeframe === "7d" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-all cursor-pointer ${timeframe === "7d" ? "bg-white/10 text-white shadow-sm" : "text-gray-400 hover:text-gray-200"}`}
               >
                 7 Days
               </button>
               <button 
                 onClick={() => setTimeframe("30d")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-all cursor-pointer ${timeframe === "30d" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-display transition-all cursor-pointer ${timeframe === "30d" ? "bg-white/10 text-white shadow-sm" : "text-gray-400 hover:text-gray-200"}`}
               >
                 30 Days
               </button>
@@ -122,59 +129,59 @@ export default function DashboardPage() {
         </div>
 
         {/* Analytics Counter Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           
-          <Card className="border-white/5 flex flex-col justify-between" glow>
+          <Card className="border-white/5 bg-gray-900/40 flex flex-col justify-between hover:border-primary/40 transition-all duration-300" glow>
             <CardHeader className="flex flex-row items-center justify-between pb-2 mb-0">
-              <CardTitle className="text-xs font-bold tracking-wider text-gray-400 uppercase font-display">System Scans</CardTitle>
+              <CardTitle className="text-[11px] font-bold tracking-wider text-gray-400 uppercase font-display">System Scans</CardTitle>
               <Shield className="h-4.5 w-4.5 text-primary" />
             </CardHeader>
             <CardContent className="mt-3">
-              <div className="text-2xl font-bold text-white font-mono">{totalScanned}</div>
+              <div className="text-3xl font-bold text-white font-mono">{totalScanned}</div>
               <p className="text-[10px] text-gray-500 font-medium mt-1 leading-tight flex items-center">
                 <ArrowUpRight className="h-3 w-3 text-safe mr-0.5" />
-                <span className="text-safe font-semibold mr-1">+12%</span> vs last week
+                <span className="text-safe font-semibold mr-1">Real-Time</span> database linked
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-white/5 flex flex-col justify-between">
+          <Card className="border-white/5 bg-gray-900/40 flex flex-col justify-between hover:border-red-500/30 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between pb-2 mb-0">
-              <CardTitle className="text-xs font-bold tracking-wider text-gray-400 uppercase font-display">Threats Flagged</CardTitle>
+              <CardTitle className="text-[11px] font-bold tracking-wider text-gray-400 uppercase font-display">Threats Flagged</CardTitle>
               <AlertOctagon className="h-4.5 w-4.5 text-danger animate-pulse" />
             </CardHeader>
             <CardContent className="mt-3">
-              <div className="text-2xl font-bold text-red-500 font-mono">{criticalScans + warningScans}</div>
+              <div className="text-3xl font-bold text-red-500 font-mono">{criticalScans + warningScans}</div>
               <p className="text-[10px] text-gray-500 font-medium mt-1 leading-tight flex items-center">
-                <span className="text-danger font-semibold mr-1">High Risk</span> action suggested
+                <span className="text-danger font-semibold mr-1">RIDS Engine</span> threat risk
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-white/5 flex flex-col justify-between">
+          <Card className="border-white/5 bg-gray-900/40 flex flex-col justify-between hover:border-emerald-500/30 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between pb-2 mb-0">
-              <CardTitle className="text-xs font-bold tracking-wider text-gray-400 uppercase font-display">Platform Accuracy</CardTitle>
+              <CardTitle className="text-[11px] font-bold tracking-wider text-gray-400 uppercase font-display">Model Accuracy</CardTitle>
               <CheckCircle className="h-4.5 w-4.5 text-safe" />
             </CardHeader>
             <CardContent className="mt-3">
-              <div className="text-2xl font-bold text-white font-mono">99.4%</div>
+              <div className="text-3xl font-bold text-white font-mono">98.03%</div>
               <p className="text-[10px] text-gray-500 font-medium mt-1 leading-tight flex items-center">
                 <ArrowUpRight className="h-3 w-3 text-safe mr-0.5" />
-                <span className="text-safe font-semibold mr-1">0.05%</span> improvement
+                <span className="text-safe font-semibold mr-1">Ridge Classifier</span> accuracy
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-white/5 flex flex-col justify-between">
+          <Card className="border-white/5 bg-gray-900/40 flex flex-col justify-between hover:border-cyan-500/30 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between pb-2 mb-0">
-              <CardTitle className="text-xs font-bold tracking-wider text-gray-400 uppercase font-display">False Positives</CardTitle>
-              <TrendingUp className="h-4.5 w-4.5 text-secondary" />
+              <CardTitle className="text-[11px] font-bold tracking-wider text-gray-400 uppercase font-display">False Positives</CardTitle>
+              <TrendingUp className="h-4.5 w-4.5 text-cyan-400" />
             </CardHeader>
             <CardContent className="mt-3">
-              <div className="text-2xl font-bold text-white font-mono">0.12%</div>
+              <div className="text-3xl font-bold text-white font-mono">0.12%</div>
               <p className="text-[10px] text-gray-500 font-medium mt-1 leading-tight flex items-center">
                 <ArrowDownRight className="h-3 w-3 text-safe mr-0.5" />
-                <span className="text-safe font-semibold mr-1">Lower</span> than threshold
+                <span className="text-safe font-semibold mr-1">Lower</span> than target threshold
               </p>
             </CardContent>
           </Card>
@@ -185,21 +192,36 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Main Traffic Chart */}
-          <Card className="lg:col-span-2 border-white/5 flex flex-col justify-between">
-            <CardHeader>
-              <CardTitle className="text-base font-bold text-white font-display">Vector Security Metrics</CardTitle>
-              <CardDescription>Processed transactions plotted by vector type over the past week.</CardDescription>
+          <Card className="lg:col-span-2 border-white/5 bg-gray-900/40 flex flex-col justify-between relative overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-bold text-white font-display">Vector Security Metrics</CardTitle>
+                <CardDescription>Processed transactions plotted by vector type over the past week.</CardDescription>
+              </div>
+              <span className="text-[10px] font-mono bg-white/5 border border-white/10 px-2.5 py-1 rounded-md text-gray-400">Telemetry Stream</span>
             </CardHeader>
-            <CardContent className="h-[300px]">
+            <CardContent className="h-[300px] relative">
+              {totalScanned === 0 && (
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-950/80 backdrop-blur-sm p-6 text-center rounded-xl border border-white/5">
+                  <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-3">
+                    <Shield className="h-6 w-6 text-primary animate-pulse" />
+                  </div>
+                  <h4 className="text-sm font-bold text-white font-display">Live Ingress Telemetry Ready</h4>
+                  <p className="text-xs text-gray-400 max-w-sm mt-1">No scan events recorded yet in this window. Analyze an Email, Call, SMS, or Phone number in Live Demo to view real-time data streams.</p>
+                  <a href="/demo" className="mt-4 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white text-xs font-semibold rounded-xl hover:shadow-lg transition-all">
+                    Launch Live Demo Scanner →
+                  </a>
+                </div>
+              )}
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorEmails" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#2563EB" stopOpacity={0.2}/>
+                      <stop offset="5%" stopColor="#2563EB" stopOpacity={0.3}/>
                       <stop offset="95%" stopColor="#2563EB" stopOpacity={0}/>
                     </linearGradient>
                     <linearGradient id="colorSMS" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.2}/>
+                      <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.3}/>
                       <stop offset="95%" stopColor="#7C3AED" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
@@ -224,12 +246,23 @@ export default function DashboardPage() {
           </Card>
 
           {/* Fraud Attempt chart */}
-          <Card className="border-white/5 flex flex-col justify-between">
-            <CardHeader>
-              <CardTitle className="text-base font-bold text-white font-display">Fraud Attempts Intercepted</CardTitle>
-              <CardDescription>Daily verified fraud attempts across all layers.</CardDescription>
+          <Card className="border-white/5 bg-gray-900/40 flex flex-col justify-between relative overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-bold text-white font-display">Fraud Intercepted</CardTitle>
+                <CardDescription>Daily verified fraud attempts across all layers.</CardDescription>
+              </div>
             </CardHeader>
-            <CardContent className="h-[300px]">
+            <CardContent className="h-[300px] relative">
+              {totalScanned === 0 && (
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-950/80 backdrop-blur-sm p-6 text-center rounded-xl border border-white/5">
+                  <div className="h-10 w-10 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-2">
+                    <AlertOctagon className="h-5 w-5 text-red-400" />
+                  </div>
+                  <h4 className="text-xs font-bold text-white font-display">Zero Threats Logged</h4>
+                  <p className="text-[11px] text-gray-400 max-w-xs mt-1">System is monitoring all incoming vectors.</p>
+                </div>
+              )}
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
