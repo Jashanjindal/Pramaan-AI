@@ -71,17 +71,16 @@ npm run install:frontend
 npm run install:backend
 ```
 
-#### 2. Start the Frontend Dev Server
-Runs the Next.js portal on [http://localhost:3000](http://localhost:3000):
+#### 2. Start Both Frontend and Backend Together (Easiest)
+Run both services simultaneously in a single terminal:
 ```bash
-npm run dev
+npm run dev:all
 ```
+This starts:
+- Frontend on [http://localhost:3000](http://localhost:3000)
+- Backend API on [http://localhost:8000](http://localhost:8000)
 
-#### 3. Start the FastAPI backend
-Runs the Python Uvicorn engine on [http://localhost:8000](http://localhost:8000):
-```bash
-npm run backend
-```
+*(Alternatively, run them in **two separate terminals**: `npm run dev` in Terminal 1, and `npm run backend` in Terminal 2)*
 
 ---
 
